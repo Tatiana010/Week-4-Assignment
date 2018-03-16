@@ -21,34 +21,34 @@ features <- read.table("UCI HAR Dataset/features.txt")
 
 
 #1.
-DataSet <- rbind(X_train,X_test)
+dataSet <- rbind(X_train,X_test)
 
 #2.
-Mean_Std <- grep("mean()|std()", features[, 2]) 
-DataSet <- DataSet[,Mean_Std]
+MeanStdOnly <- grep("mean()|std()", features[, 2]) 
+dataSet <- dataSet[,MeanStdOnly]
 
 #4.
-FeatureNames <- sapply(features[, 2], function(x) {gsub("[()]", "",x)})
-NamesDataSet <- FeatureNames[MeanStdOnly]
+CleanFeatureNames <- sapply(features[, 2], function(x) {gsub("[()]", "",x)})
+names(dataSet) <- CleanFeatureNames[MeanStdOnly]
 
 
-Subject <- rbind(subject_train, subject_test)
-Names_subject <- 'Subject'
-Activity <- rbind(y_train, y_test)
-Names_activity <- 'Activity'
+subject <- rbind(subject_train, subject_test)
+names(subject) <- 'subject'
+activity <- rbind(y_train, y_test)
+names(activity) <- 'activity'
 
-DataSet <- cbind(Subject,Activity, DataSet)
+dataSet <- cbind(subject,activity, dataSet)
 
 #3.
-act_group <- factor(DataSet$Activity)
+act_group <- factor(dataSet$activity)
 levels(act_group) <- activity_labels[,2]
-DataSet$Activity <- act_group
+dataSet$activity <- act_group
 
 #5.
-BaseData <- melt(DataSet,(id.vars=c("Subject","Activity")))
-DataSet2 <- dcast(BaseData, subject + activity ~ variable, mean)
-DataSet2[-c(1:2)] <- paste("[mean of]" , DataSet2[-c(1:2)] )
-Write.table(DataSet2, "tidy_data.txt", sep = ",")
+baseData <- melt(dataSet,(id.vars=c("subject","activity")))
+secondDataSet <- dcast(baseData, subject + activity ~ variable, mean)
+names(secondDataSet)[-c(1:2)] <- paste("[mean of]" , names(secondDataSet)[-c(1:2)] )
+write.table(secondDataSet, "tidy_data.txt", sep = ",")
 
 
 
